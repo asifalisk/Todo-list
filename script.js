@@ -1,17 +1,24 @@
-let Todolist = [
-    {
-        text: "Learn Javascript",
-        uniqueNo: 1
-    },
-    {
-        text: "Learn HTML",
-        uniqueNo: 2
-    },
-    {
-        text: "Learn CSS",
-        uniqueNo: 3
+
+function localstorageGetvalues(){
+    let getinlocalStorage=localStorage.getItem("TodoItems");
+    let parsedItems=JSON.parse(getinlocalStorage);
+
+    if(parsedItems===null){
+        return [];
     }
-]
+    else{
+        return parsedItems;
+    }
+}
+
+
+let Todolist=localstorageGetvalues();
+
+let saveButtonEle=document.getElementById("savebutton");
+saveButtonEle.onclick=function (){
+    localStorage.setItem("TodoItems",JSON.stringify(Todolist));
+}
+
 
 function onTodoStatusChange(checklistId,labelId){
     let checkboxElement=document.getElementById(checklistId)
@@ -22,6 +29,16 @@ function onTodoStatusChange(checklistId,labelId){
 function deleteContainer(TodoId){
     let lielement=document.getElementById(TodoId);
     containerItem.removeChild(lielement);
+    let findIndex=Todolist.findIndex(function(eachTodo){
+        let eachTodoId="todo"+eachTodo.uniqueNo;
+        if(eachTodoId===TodoId){
+            return true;
+        }
+        else{
+            return false;
+        }
+    })
+    Todolist.splice(findIndex,1);
 }
 
 
@@ -83,10 +100,13 @@ function addTodoItem(){
         text:inputTextValue,
         uniqueNo:TodoCount
     }
+    Todolist.push(newTodo);
     createAndAppendChild(newTodo);
+    inputTextElement.value="";
 }
 
 
 for(let Todo of Todolist ){
     createAndAppendChild(Todo)
 }
+
